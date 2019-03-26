@@ -59,6 +59,10 @@ def save_tickers(maximum, outfile):
             print("Moving to Next Page", currentURL, "Valid Ticker(s) Found:", len(validTickers),)
 
 if __name__ == '__main__':
-    numTickers = int(sys.argv[1])
-    outFileName = sys.argv[2]
-    save_tickers(numTickers, outFileName)
+    # Input Checking
+    if len(sys.argv) != 3 or int(sys.argv[1]) > 150 or int(sys.argv[1]) < 0:
+        print("Invalid Input. See Usage.")
+    else:
+        numTickers = int(sys.argv[1])
+        outFileName = sys.argv[2]
+        save_tickers(numTickers, outFileName)
