@@ -13,11 +13,14 @@ def save_tickers(num, outfile):
     validTickers = set()
 
     for ticker in tickers:
+        if len(validTickers) >= num:
+            print(len(validTickers),"Valid Ticker(s) Found. Limit Reached.")
+            break
         try:
             Stock(ticker).price()
             validTickers.add(ticker)
         except:
-            print("Invalid Ticker", ticker)
+            print("Invalid Ticker:", ticker)
     
     f = open(outfile, "w")
 
