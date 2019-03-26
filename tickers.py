@@ -4,17 +4,31 @@ import requests
 import re
 from iex import Stock
 
+# Initial URL to Visit
 NASDAQ_URL = "http://www.nasdaq.com/screening/companies-by-industry.aspx?exchange=NASDAQrender=download"
 
-def save_tickers(num, outfile):
-    response = requests.get(NASDAQ_URL)
-    tickers = set(re.findall(r'symbol/([a-z]*)', response.text))
+# Compile Regex Patterns
+PATTERN_SYMBOLS = re.compile(r'symbol/([a-z]*)')
+PATTERN_NEXT_PAGE = re.compile(r'<a href="(.{90,105})" id="main_content_lb_NextPage"')
 
+def print_to_file(outFile, tickerSet):
+    f = open(outFile, "w")
+    for ticker in tickerSet:
+        f.write(ticker + "\n")
+    f.close()
+    
+def get_tickers_from_url(url, maximum, currentLength):
+    # Get Initial Web Page
+    response = requests.get(url)
+
+    # Harvest Tickers
+    tickers = set(re.findall(PATTERN_SYMBOLS, response.text))
+
+    # Check Tickers for Validity & Limit
     validTickers = set()
-
     for ticker in tickers:
-        if len(validTickers) >= num:
-            print(len(validTickers),"Valid Ticker(s) Found. Limit Reached.")
+        if len(validTickers)+currentLength >= maximum:
+            print(len(validTickers)+currentLength,"Valid Ticker(s) Found. User Specified Limit Reached.")
             break
         try:
             Stock(ticker).price()
@@ -22,15 +36,27 @@ def save_tickers(num, outfile):
         except:
             print("Invalid Ticker:", ticker)
     
-    f = open(outfile, "w")
+    return validTickers
 
-    for i,ticker in enumerate(validTickers):
-        if i < num:
-            f.write(ticker + "\n")
-        else:
-            break
+def save_tickers(maximum, outfile):
+    # Initialize
+    validTickers = set()
+    currentURL = NASDAQ_URL
 
-    f.close()
+    while len(validTickers) < maximum:
+        # Collect Tickers
+        validTickers.update(get_tickers_from_url(currentURL,maximum,len(validTickers)))
+
+        # Collect New Page URL
+        response = requests.get(currentURL)
+        currentURL = re.findall(PATTERN_NEXT_PAGE,response.text)[0]
+
+        # Print Valid Ticker Set to Output File
+        print_to_file(outfile, validTickers)
+
+        # Announce Page Change
+        if len(validTickers) < maximum:
+            print("Moving to Next Page", currentURL, "Valid Ticker(s) Found:", len(validTickers),)
 
 if __name__ == '__main__':
     numTickers = int(sys.argv[1])
