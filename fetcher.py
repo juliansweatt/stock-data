@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+"""Periodically fetch stock ticker data for a set duration.
+
+Example:
+    $ python3 fetcher.py 120 ticker.txt info.csv
+"""
 import sys
 import time
 import datetime
@@ -6,6 +11,18 @@ import os
 from iex import Stock
 
 def getTickers(fName):
+    """Retrieve a set of tickers from a text file.
+
+        Retrieves a set of tickers from a text file such that each
+        line of the text file is a new ticker represented as a 
+        string.
+
+        Args:
+            fName (str): Filename/path to ticker text file.
+        
+        Returns:
+            set: A set of tickers such that each element is a valid ticker.
+    """
     tickers = set()
 
     try:
@@ -32,7 +49,7 @@ if __name__ == '__main__':
     exists = os.path.isfile(infoFname)
     outfile = open(infoFname, "a")
     if not exists:
-        # Appending to File
+        # Initialize File if New
         outfile.write("Time, Ticker, latestPrice, latestVolume, Close, Open, low, high\n")
     outfile.flush()
 
@@ -42,12 +59,12 @@ if __name__ == '__main__':
     firstPass = True
     while time.time() < endTime:
         if firstPass or (datetime.datetime.now().minute != currentMinute):
-            outfile = open(infoFname, "a")
-            if firstPass:
+            # 
+            if not exists and firstPass:
                 print("Retrieving Stock Data")
                 firstPass = False
             else:
-                print("Updating Stock Data for", datetime.datetime.now().time())
+                print("Updating Stock Data at", datetime.datetime.now().time())
 
             # Execute Update Here
             for ticker in tickerSet:
