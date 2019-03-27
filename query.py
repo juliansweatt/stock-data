@@ -1,4 +1,29 @@
-import sys
+import argparse
+import re
+
+def strbool(s):
+    if s == "False":
+        return False
+    elif s == "True":
+        return True
+    else:
+        return s
+
+def validtime(s):
+    temp = re.findall(r'([0-2][0-9]):([0-5][0-9])', s)
+    if len(temp) == 1 and len(temp[0]) == 2:
+        return s
+    else:
+        raise argparse.ArgumentTypeError('Time Format Expected (HH:MM such that 00 < HH < 24 and 00 < MM < 59 )')
+
+def parseInput():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-verbose", type=strbool, choices=(True,False), required=False, default=False, help="Enable Verbose Output")
+    parser.add_argument("-file", type=str, required=True, help="Specify Info Filename/Path")
+    parser.add_argument("-ticker", type=str, required=True, help="Specify Ticker to Query")
+    parser.add_argument("-time", type=validtime, required=True, help="Specify Time to Query")
+    return parser.parse_args()
+    print(args.verbose, args.file, args.ticker, args.time)
 
 def getdata(verbose, fname, tick, time):
     infile = open(fname, "r")
@@ -7,12 +32,8 @@ def getdata(verbose, fname, tick, time):
             print("check for debugging")
 
 if __name__ == "__main__":
-    if len(sys.argv) != 9 or sys.argv[1] != "-verbose" or sys.argv[3] != "-file" or sys.argv[5] != "-ticker" or sys.argv[7] != "-time":
-        print("Invalid input. See usage.")
-    else:
-        verbosity = sys.argv[2]
-        fname = sys.argv[4]
-        ticker = sys.argv[6]
-        time = sys.argv[8]
-        getdata(verbosity, fname, ticker, time)
+    # Parse Named Arguments With Argsparse
+    args = parseInput()
 
+    # Get Data
+    getdata(args.verbose, args.file, args.ticker, args.time)
