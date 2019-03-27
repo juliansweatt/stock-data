@@ -63,3 +63,6 @@ _Hannah Howard & Julian Sweatt_
     * sklearn
       * **Install:** `pip3 install sklearn`
       * **Purpose:** Used for Model Training
+    * matplotlib
+      * **Install:** `pip3 install matplotlib`
+      * **Purpose:** Used for Plotting Data

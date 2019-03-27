@@ -2,8 +2,7 @@
 import argparse
 import csv
 from sklearn import linear_model
-
-#sklearn.linear model
+import matplotlib.pyplot
 
 def valid_file(s):
     """Verifies a filename/path.
@@ -59,9 +58,39 @@ def queryTicker(fName, ticker, col):
         print("No Instances of the Ticker", ticker, "Found in", fName)
         exit()
 
+def plot(x_fact, y_fact, x_predict=[], y_predict=[], graph_filename="graph.png"):
+    """Save a plot/graph to specified file.
+
+    Args:
+        x_fact: Set of known x values.
+        y_fact: Set of known y values.
+        x_predict: Set of predicted x values.
+        y_predict: Set of predicted y values.
+        graph_filename (str): Filename/path of output file.
+    """
+    # Configure Plot
+    plt = matplotlib.pyplot
+    plt.plot(x_fact,y_fact,"b.")          # Plot Known Data in Blue
+    plt.plot(x_predict,y_predict,"r.")    # Plot Prediction Data in Red
+
+    # Save Plot
+    #plt.savefig(graph_filename)
+    plt.show()
 
 def predictor(ticker, info_filename, graph_filename, col, t):
-    print(queryTicker(info_filename, ticker, col)) # Printing for Debug
+    from sklearn.model_selection import train_test_split  
+
+    # Initialize Predictor
+    reg = linear_model.LinearRegression()
+
+    # Harvest Data from CSV
+    allData = queryTicker(info_filename, ticker, col)
+
+    # Split X/Y Pairs
+    x,y = zip(*allData)
+    plot(x,y)
+
+    # Split Values into Training & Test Data
 
 if __name__ == "__main__":
     # Parse Arguments
