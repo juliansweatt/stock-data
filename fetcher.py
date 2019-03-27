@@ -36,6 +36,35 @@ def getTickers(fName):
 
     return tickers
 
+def makeTimeString(hour, minute):
+    """Makes a time string (HH:MM) from hour and minute.
+
+    Args:
+        hour (int): Hour.
+        minute (int): Minute.
+    
+    Returns:
+        str: String of time in the form HH:MM, substituting 0 as needed.
+    """
+
+    timeString = str()
+    hourString = str()
+    minuteString = str()
+
+    if hour < 10:
+        hourString = "0" + str(hour)
+    else:
+        hourString = str(hour)
+
+    if minute < 10:
+        minuteString = "0" + str(minute)
+    else:
+        minuteString = str(minute)
+    
+    timeString = hourString + ":" + minuteString
+
+    return timeString
+
 if __name__ == '__main__':
     # Collect System Arguments
     timeLimit = int(sys.argv[1])
@@ -50,7 +79,7 @@ if __name__ == '__main__':
     outfile = open(infoFname, "a")
     if not exists:
         # Initialize File if New
-        outfile.write("Time, Ticker, latestPrice, latestVolume, Close, Open, low, high\n")
+        outfile.write("Time,Ticker,latestPrice,latestVolume,Close,Open,low,high\n")
     outfile.flush()
 
     # Timed Execution
@@ -69,9 +98,9 @@ if __name__ == '__main__':
             # Execute Update Here
             for ticker in tickerSet:
                 tickInfo = Stock(ticker).quote()
-                tickStr = str(datetime.datetime.now().hour) + ":" + str(currentMinute) + ", " + ticker + ", " + str(tickInfo["latestPrice"]) + ", "
-                tickStr = tickStr + str(tickInfo["latestVolume"]) + ", " + str(tickInfo["close"]) + ", " + str(tickInfo["open"]) + ", "
-                tickStr = tickStr + str(tickInfo["low"]) + ", " + str(tickInfo["high"]) + "\n"
+                tickStr = str(makeTimeString(datetime.datetime.now().hour, datetime.datetime.now().minute) + "," + ticker + "," + str(tickInfo["latestPrice"]) + ",")
+                tickStr = tickStr + str(tickInfo["latestVolume"]) + "," + str(tickInfo["close"]) + "," + str(tickInfo["open"]) + ","
+                tickStr = tickStr + str(tickInfo["low"]) + "," + str(tickInfo["high"]) + "\n"
                 outfile.write(tickStr)
             currentMinute = datetime.datetime.now().minute
             outfile.flush()

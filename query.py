@@ -1,5 +1,6 @@
 import argparse
 import re
+import csv
 
 def strbool(s):
     if s == "False":
@@ -25,19 +26,56 @@ def parseInput():
     return parser.parse_args()
     print(args.verbose, args.file, args.ticker, args.time)
 
-def getdata(verbose, fname, tick, time):
+def getdata(fname, tick, time):
     try:
         infile = open(fname, "r")
     except IOError as e:
         exit(e)
 
-    for line in infile:
-        if time in line and tick in line:
-            print("check for debugging")
+    data = csv.DictReader(infile)
+
+    for row in data:
+        if row["Time"] == time and row["Ticker"] == tick:
+            return row
+    
+    print("No Entry Found for Ticker", tick, "At", time)
+
+def numRows(fname):
+    tally = 0
+    try:
+        infile = open(fname, "r")
+    except IOError as e:
+        exit(e)
+    data = csv.DictReader(infile)
+    for row in data:
+        tally += 1
+    return tally
+
+def numCols(fname):
+    try:
+        infile = open(fname, "r")
+    except IOError as e:
+        exit(e)
+    return len(csv.DictReader(infile).fieldnames)
+
+def printEntry(entry, verbose=False, numCols=0, numRows=0): # OrderedDict
+    if verbose:
+        print("Info File Details:")
+        print(" Number of Columns:", numCols)
+        print(" Number of Rows:", numRows)
+        print()
+        for key in entry:
+            print(key + ": " + entry[key])
+    else:
+        for i,key in enumerate(entry):
+            print("Field", str(i) + ":", entry[key])
 
 if __name__ == "__main__":
     # Parse Named Arguments With Argsparse
     args = parseInput()
 
     # Get Data
-    getdata(args.verbose, args.file, args.ticker, args.time)
+    if args.verbose:
+        printEntry(getdata(args.file, args.ticker, args.time), args.verbose,numCols(args.file),numRows(args.file))
+    else:
+        printEntry(getdata(args.file, args.ticker, args.time))
