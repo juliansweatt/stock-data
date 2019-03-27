@@ -58,17 +58,19 @@ def numCols(fname):
         exit(e)
     return len(csv.DictReader(infile).fieldnames)
 
-def printEntry(entry, verbose=False, numCols=0, numRows=0): # OrderedDict
+def printEntry(entry, verbose=False, numCols=0, numRows=0):
     if verbose:
         print("Info File Details:")
         print(" Number of Columns:", numCols)
         print(" Number of Rows:", numRows)
-        print()
-        for key in entry:
-            print(key + ": " + entry[key])
+        if entry:
+            print("\n----- Query Results ------")
+            for key in entry:
+                print(key + ": " + entry[key])
     else:
-        for i,key in enumerate(entry):
-            print("Field", str(i) + ":", entry[key])
+        if entry:
+            for i,key in enumerate(entry):
+                print("Field", str(i) + ":", entry[key])
 
 if __name__ == "__main__":
     # Parse Named Arguments With Argsparse
