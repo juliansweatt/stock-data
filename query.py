@@ -18,7 +18,7 @@ def validtime(s):
 
 def parseInput():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-verbose", type=strbool, choices=(True,False), required=False, default=False, help="Enable Verbose Output")
+    parser.add_argument("-verbose", type=strbool, choices=(True,False), required=True, default=False, help="Enable Verbose Output")
     parser.add_argument("-file", type=str, required=True, help="Specify Info Filename/Path")
     parser.add_argument("-ticker", type=str, required=True, help="Specify Ticker to Query")
     parser.add_argument("-time", type=validtime, required=True, help="Specify Time to Query")
@@ -26,7 +26,11 @@ def parseInput():
     print(args.verbose, args.file, args.ticker, args.time)
 
 def getdata(verbose, fname, tick, time):
-    infile = open(fname, "r")
+    try:
+        infile = open(fname, "r")
+    except IOError as e:
+        exit(e)
+
     for line in infile:
         if time in line and tick in line:
             print("check for debugging")
