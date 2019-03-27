@@ -9,8 +9,8 @@ _Hannah Howard & Julian Sweatt_
 ## Contents
 * [README.md](./README.md) _This File_ | Project Details & Information Written in Markdown
 * [tickers.py](./tickers.py) Generates File of Valid Stock Tickers
-* [fetcher.py](./fetcher.py) @todo
-* [query.py](./query.py) @todo
+* [fetcher.py](./fetcher.py) Gets Periodic Stock Information in CSV Format
+* [query.py](./query.py) Query A CSV file for a Particular Ticker at a Given Time.
 * [predictor.py](./predictor.py) @todo
 
 ## Usage
@@ -38,6 +38,11 @@ _Hannah Howard & Julian Sweatt_
     minute (or the time expires, whichever comes first). At the next minute another fetch will be made, appending to the
     `info.csv` file.
 * [query.py](./query.py)
+  * Usage: `python3 query.py –verbose True/False –file info_filename –ticker ticker –time time`
+  * Example: `python3 query.py –verbose False –file info.csv –ticker jobs –time 01:07`
+    * In this example, `info.csv` will be queried for a row containing `01:07` as the time and `jobs` as the ticker. If
+    such a row exists, relevant data from that row will be printed. The `verbose` flag is set to `False`, so column names and
+    row/column lengths of the CSV file will not be printed.
 * [predictor.py](./predictor.py)
 
 ## Recommended Execution
@@ -46,5 +51,12 @@ _Hannah Howard & Julian Sweatt_
 ## Dependencies
 * Python 3
 * Modules
-    * iex-api-python (`pip3 install iex-api-python`)
-    * requests (`pip3 install requests`)
+    * iex-api-python
+      * **Install:** `pip3 install iex-api-python`
+      * **Purpose:** Used to Obtain NASDAQ Stock Data
+    * requests
+      * **Install:** `pip3 install requests`
+      * **Purpose:** Used for HTTP Requests
+    * argparse
+      * **Install:** `pip3 install argparse`
+      * **Purpose:** Used for Named Argument Parsing
