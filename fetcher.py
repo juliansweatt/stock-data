@@ -2,6 +2,7 @@
 import sys
 import time
 import datetime
+import os
 from iex import Stock
 
 def getTickers(fName):
@@ -26,18 +27,28 @@ if __name__ == '__main__':
 
     # Collect Stock Tickers
     tickerSet = getTickers(tickerFname)
-    print(tickerSet)  # Printing for debugging
 
-    #setup for print file
-    outfile = open(infoFname, "w")
-    outfile.write("Time, Ticker, latestPrice, latestVolume, Close, Open, low, high\n")
+    # Setup for Print File
+    exists = os.path.isfile(infoFname)
+    outfile = open(infoFname, "a")
+    if not exists:
+        # Appending to File
+        outfile.write("Time, Ticker, latestPrice, latestVolume, Close, Open, low, high\n")
+    outfile.flush()
 
     # Timed Execution
     endTime = time.time() + timeLimit
     currentMinute = datetime.datetime.now().minute
+    firstPass = True
     while time.time() < endTime:
-        if(datetime.datetime.now().minute != currentMinute):
-            print("Updating Stock Data")
+        if firstPass or (datetime.datetime.now().minute != currentMinute):
+            outfile = open(infoFname, "a")
+            if firstPass:
+                print("Retrieving Stock Data")
+                firstPass = False
+            else:
+                print("Updating Stock Data for", datetime.datetime.now().time())
+
             # Execute Update Here
             for ticker in tickerSet:
                 tickInfo = Stock(ticker).quote()
@@ -46,5 +57,6 @@ if __name__ == '__main__':
                 tickStr = tickStr + str(tickInfo["low"]) + ", " + str(tickInfo["high"]) + "\n"
                 outfile.write(tickStr)
             currentMinute = datetime.datetime.now().minute
+            outfile.flush()
     print("Time Limit Has Expired at", datetime.datetime.now().time())
     outfile.close()
