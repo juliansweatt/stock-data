@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
+import datetime
 import argparse
 import csv
 from sklearn import linear_model
 import numpy
 import matplotlib.pyplot
+import matplotlib.dates
 
 def valid_file(s):
     """Verifies a filename/path.
@@ -64,27 +66,54 @@ def plot(ticker, x_actual, y_actual, x_predict=[], y_predict=[], graph_filename=
 
     Args:
         ticker (str): Name of Ticker Being Plotted
-        x_actual: Set of known x values.
-        y_actual: Set of known y values.
-        x_predict: Set of predicted x values.
-        y_predict: Set of predicted y values.
+        x_actual (2D datetime Array): Set of known x values. 
+        y_actual (2D int Array): Set of known y values. 
+        x_predict (2D datetime Array): Set of predicted x values 
+        y_predict (2D int Array): Set of predicted y values. 
         graph_filename (str): Filename/path of output file.
         col(str): `latestPrice` or `latestVolume` depending on targeted prediction. 
     """
+
     # Configure Plot
     plt = matplotlib.pyplot
-    plt.xlabel("Time (HH:MM)")
-    plt.ylabel(col)
-    plt.title("Actual & Predicted Stock Data of " + ticker.upper())
-    plt.plot(x_actual,y_actual,"b.", label="Actual")          # Plot Known Data in Blue
-    plt.plot(x_predict,y_predict,"r.", label="Prediction")    # Plot Prediction Data in Red
-    plt.legend()
+    plt.xlabel("Time (HH:MM)")                                      # Set X-Axis Label
+    plt.ylabel(col)                                                 # Set Y-Axis Label
+    plt.title("Actual & Predicted Stock Data of " + ticker.upper()) # Set Title
+    plt.plot(x_actual, y_actual, "b.", label="Actual")              # Plot Known Data in Blue
+    plt.plot(x_predict, y_predict, "r.", label="Prediction")        # Plot Prediction Data in Red
+    plt.legend()                                                    # Generate Legend
+    plt.gcf().autofmt_xdate()                                       # Format for Dates
+    formatHHMM = matplotlib.dates.DateFormatter('%H:%M')            # Restrict Dates to HH:MM
+    plt.gca().xaxis.set_major_formatter(formatHHMM)                 # Assign Format
 
     # Save Plot
-    #plt.savefig(graph_filename)
-    plt.show()
+    plt.savefig(graph_filename)
+
+def convertMinutesToTime(timeInt):
+    """Convert minutes (integer) to a time object.
+
+    Args:
+        timeInt (int): Time represented in minutes.
+
+    Returns:
+        (datetime.time): Time object.
+    """
+    hour = int(timeInt / 60)
+    minute = timeInt-(hour*60)
+    return datetime.datetime(1,1,1,hour,minute)
 
 def convertToMinutes(time):
+    """Convert a time string (HH:MM) to a minute integer
+
+    Convert a time string (HH:MM) to a minute integer such that 00:00 is 0 minutes
+    and 23:00 is 1380 minutes for example.
+
+    Args:
+        time (str): Time string in the form HH:MM
+
+    Returns:
+        (int): Minute representation of the time.
+    """
     hour = int(time[:2])
     minute = int(time[3:])
     hour *= 60
@@ -119,11 +148,20 @@ def predictor(ticker, info_filename, graph_filename, col, t):
     # Train Model
     reg.fit(x_trainer, y_trainer)
 
+    # Make DateTimes
+    x_trainer_time = []
+    for x in x_trainer:
+        x_trainer_time.append([convertMinutesToTime(x)])
+
+    x_prediction_time = []
+    for x in x_predict:
+        x_prediction_time.append([convertMinutesToTime(x)])
+
     # Generate Prediction from the Model
     prediction_model = reg.predict(x_predict)
 
     # Plot Known Data With Prediction Data
-    plot(ticker, x_trainer, y_trainer, x_predict, prediction_model, graph_filename, col)
+    plot(ticker, x_trainer_time, y_trainer, x_prediction_time, prediction_model, graph_filename, col)
 
 if __name__ == "__main__":
     # Parse Arguments
