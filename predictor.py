@@ -2,6 +2,7 @@
 import argparse
 import csv
 from sklearn import linear_model
+import numpy
 import matplotlib.pyplot
 
 def valid_file(s):
@@ -50,7 +51,7 @@ def queryTicker(fName, ticker, col):
 
     for row in info:
         if row["Ticker"] == ticker:
-            data.append((row["Time"], row[col]))
+            data.append((row["Time"], int(row[col])))
 
     if len(data) > 1:
         return data
@@ -80,11 +81,16 @@ def plot(ticker, x_actual, y_actual, x_predict=[], y_predict=[], graph_filename=
     plt.legend()
 
     # Save Plot
-    plt.savefig(graph_filename)
-    #plt.show()
+    #plt.savefig(graph_filename)
+    plt.show()
+
+def convertToMinutes(time):
+    hour = int(time[:2])
+    minute = int(time[3:])
+    hour *= 60
+    return hour + minute
 
 def predictor(ticker, info_filename, graph_filename, col, t):
-    import numpy as np
     # Initialize Predictor
     reg = linear_model.LinearRegression()
 
@@ -92,28 +98,36 @@ def predictor(ticker, info_filename, graph_filename, col, t):
     allData = queryTicker(info_filename, ticker, col)
 
     # Split X/Y Pairs
-    x,y = zip(*allData)
+    x_values, y_values = zip(*allData)
 
-    # Trim to Minute (Temp Debug)
+    # Convert Time to Minutes
     x_trainer = []
-    for x_val in x:
-        x_trainer.append(int(x_val[3:]))
+    for x in x_values:
+        x_trainer.append(convertToMinutes(x))
+    
+    # Generate Prediction Times
+    x_predict = []
+    first_predict = x_trainer[len(x_trainer)-1] + 1
+    for i in range(first_predict, first_predict+t):
+        x_predict.append(i)
 
     # Convert to 2D Arrays
-    x_trainer = np.reshape(x_trainer, (-1,1))
-    y_trainer = np.reshape(y, (-1,1))
+    x_trainer = numpy.reshape(x_trainer, (-1,1))
+    y_trainer = numpy.reshape(y_values, (-1,1))
+    x_predict = numpy.reshape(x_predict, (-1,1))
 
-    # Split Values into Training & Test Data
+    # Train Model
     reg.fit(x_trainer, y_trainer)
-    prediction_model = reg.predict(x_trainer)
-    print(prediction_model)
-    # print(reg.predict(trainer))
+
+    # Generate Prediction from the Model
+    prediction_model = reg.predict(x_predict)
 
     # Plot Known Data With Prediction Data
-    plot(ticker, x, y, x, prediction_model, graph_filename, col)
+    plot(ticker, x_trainer, y_trainer, x_predict, prediction_model, graph_filename, col)
 
 if __name__ == "__main__":
     # Parse Arguments
     args = parseInput()
 
+    # Generate Prediction
     predictor(args.ticker, args.info_filename, args.graph_filename, args.col, args.t)
