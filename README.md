@@ -60,3 +60,9 @@ _Hannah Howard & Julian Sweatt_
     * argparse
       * **Install:** `pip3 install argparse`
       * **Purpose:** Used for Named Argument Parsing
+    * sklearn
+      * **Install:** `pip3 install sklearn`
+      * **Purpose:** Used for Model Training
+    * matplotlib
+      * **Install:** `pip3 install matplotlib`
+      * **Purpose:** Used for Plotting Data
