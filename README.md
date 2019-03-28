@@ -1,10 +1,10 @@
 # Stock Data Project
 __CIS4930 - Python Programming__  
-_Hannah Howard & Julian Sweatt_
+_Julian Sweatt & Hannah Howard_
 
 ---
 ## About
-@todo
+This suite of stock-data analysis tools is intended to collect tickers from the NASDAQ website in an intentionally unorthodox way (HTML Parsing), verify them, and save them to a list. This list can then be used to fetch minute-incremental stock data information and save stock history in CSV format. This CSV stock history data can then be queried or used to predict future stock information using a linear regression machine learning model. 
 
 ## Contents
 * [README.md](./README.md) _This File_ | Project Details & Information Written in Markdown
@@ -47,13 +47,26 @@ _Hannah Howard & Julian Sweatt_
   * Usage: `python3 predictor.py ticker info_filename graph_filename col t`
     * `ticker` _(str)_ - The stock ticker to predict.
     * `info_filename` _(str)_ - The CSV info filename/path containing stock history. Expected to be the output of `fetcher.py`.
-    * `graph_filename` _(str)_ - The output filename/path for the prediction graph being created. Must have no file extension (default is `.png`) or a supported file extension (`eps`, `pdf`, `pgf`, `png`, `ps`, `raw`, `rgba`, `svg`, or `svgz`).
+    * `graph_filename` _(str)_ - The output filename/path for the prediction graph being created. Must have no file extension
+    (default is `.png`) or a supported file extension (`eps`, `pdf`, `pgf`, `png`, `ps`, `raw`, `rgba`, `svg`, or `svgz`).
     * `col` _(str)_ - The column to predict. Must be `latestPrice` or `latestVolume`.
     * `t` _(int)_ - The duration of time to predict stock data for in minutes.
   * Example: `python3 predictor.py jobs info.csv graph.png latestPrice 10`
 
-## Recommended Execution
-
+## Stock-Data Suite Execution Example 
+1. `python3 tickers.py 100 ticker.txt`
+    * Retrieve `100` Valid Tickers and Save to `ticker.txt`
+2. `python3 fetcher.py 600 ticker.txt info.csv`
+    * Collect `600` seconds *(10 Minutes)* of Stock History for Tickers in `ticker.txt` and Save to `info.csv`
+    * Note, Collecting Data Outside of *9:30am to 4:00pm EST* Will Yield Only Linear Data as the Market is Closed,
+  So Stocks Can Not Change.
+3. `python3 query.py -verbose True -file info.csv -ticker jobs -time 15:10`
+    * Query `info.csv` for a Row Representing the `jobs` Ticker at `15:10` with Verbose Output
+    * Note, the time used in this example is `15:10` but the time used must be during the time frame `fetcher.py` was running.
+4. `python3 predictor.py jobs info.csv graph.png latestPrice 10`
+    * Predict `10` Minutes of Stock Data for the `jobs` Ticker Using Stock History Data from `info.csv` and Save to `graph.png`.
+    * Note, the ticker used in this example is `jobs` but the ticker must have been in `tickers.txt`, used during
+    fetching in `fetcher.py` and have corresponding data saved in `info.csv`. A ticker is valid if it can be queried using `query.py`. 
 
 ## Dependencies
 * Python 3
@@ -76,3 +89,10 @@ _Hannah Howard & Julian Sweatt_
     * numpy
       * **Install:** `pip3 install numpy`
       * **Purpose:** Array Manipulation
+
+## Known Bugs
+* Predictor can not predict at a time that exceeds the known day. 
+For example, if known data is collected from 07:00 to 10:00,
+predictions can not be made past 23:59. However, it doesn't make
+much sense to need to predict outside of the current day as the NASDAQ 
+market is closed late at night/early in the morning.

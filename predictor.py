@@ -104,7 +104,7 @@ def queryTicker(fName, ticker, col):
 
     for row in info:
         if row["Ticker"] == ticker:
-            data.append((row["Time"], int(row[col])))
+            data.append((row["Time"], float(row[col])))
 
     if len(data) > 1:
         return data
