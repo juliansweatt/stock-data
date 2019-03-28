@@ -84,8 +84,7 @@ def plot(ticker, x_actual, y_actual, x_predict=[], y_predict=[], graph_filename=
     #plt.show()
 
 def predictor(ticker, info_filename, graph_filename, col, t):
-    from sklearn.model_selection import train_test_split  
-
+    import numpy as np
     # Initialize Predictor
     reg = linear_model.LinearRegression()
 
@@ -95,13 +94,23 @@ def predictor(ticker, info_filename, graph_filename, col, t):
     # Split X/Y Pairs
     x,y = zip(*allData)
 
-    # Split Values into Training & Test Data
+    # Trim to Minute (Temp Debug)
+    x_trainer = []
+    for x_val in x:
+        x_trainer.append(int(x_val[3:]))
 
-    # reg.fit(train_data_X,train_data_Y)
+    # Convert to 2D Arrays
+    x_trainer = np.reshape(x_trainer, (-1,1))
+    y_trainer = np.reshape(y, (-1,1))
+
+    # Split Values into Training & Test Data
+    reg.fit(x_trainer, y_trainer)
+    prediction_model = reg.predict(x_trainer)
+    print(prediction_model)
     # print(reg.predict(trainer))
 
     # Plot Known Data With Prediction Data
-    plot(ticker, x, y, x, y, graph_filename, col)
+    plot(ticker, x, y, x, prediction_model, graph_filename, col)
 
 if __name__ == "__main__":
     # Parse Arguments
