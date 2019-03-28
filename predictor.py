@@ -58,24 +58,30 @@ def queryTicker(fName, ticker, col):
         print("No Instances of the Ticker", ticker, "Found in", fName)
         exit()
 
-def plot(x_fact, y_fact, x_predict=[], y_predict=[], graph_filename="graph.png"):
+def plot(ticker, x_actual, y_actual, x_predict=[], y_predict=[], graph_filename="graph.png", col=""):
     """Save a plot/graph to specified file.
 
     Args:
-        x_fact: Set of known x values.
-        y_fact: Set of known y values.
+        ticker (str): Name of Ticker Being Plotted
+        x_actual: Set of known x values.
+        y_actual: Set of known y values.
         x_predict: Set of predicted x values.
         y_predict: Set of predicted y values.
         graph_filename (str): Filename/path of output file.
+        col(str): `latestPrice` or `latestVolume` depending on targeted prediction. 
     """
     # Configure Plot
     plt = matplotlib.pyplot
-    plt.plot(x_fact,y_fact,"b.")          # Plot Known Data in Blue
-    plt.plot(x_predict,y_predict,"r.")    # Plot Prediction Data in Red
+    plt.xlabel("Time (HH:MM)")
+    plt.ylabel(col)
+    plt.title("Actual & Predicted Stock Data of " + ticker.upper())
+    plt.plot(x_actual,y_actual,"b.", label="Actual")          # Plot Known Data in Blue
+    plt.plot(x_predict,y_predict,"r.", label="Prediction")    # Plot Prediction Data in Red
+    plt.legend()
 
     # Save Plot
-    #plt.savefig(graph_filename)
-    plt.show()
+    plt.savefig(graph_filename)
+    #plt.show()
 
 def predictor(ticker, info_filename, graph_filename, col, t):
     from sklearn.model_selection import train_test_split  
@@ -88,9 +94,14 @@ def predictor(ticker, info_filename, graph_filename, col, t):
 
     # Split X/Y Pairs
     x,y = zip(*allData)
-    plot(x,y)
 
     # Split Values into Training & Test Data
+
+    # reg.fit(train_data_X,train_data_Y)
+    # print(reg.predict(trainer))
+
+    # Plot Known Data With Prediction Data
+    plot(ticker, x, y, x, y, graph_filename, col)
 
 if __name__ == "__main__":
     # Parse Arguments
