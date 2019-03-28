@@ -65,12 +65,7 @@ def makeTimeString(hour, minute):
 
     return timeString
 
-if __name__ == '__main__':
-    # Collect System Arguments
-    timeLimit = int(sys.argv[1])
-    tickerFname = sys.argv[2]
-    infoFname = sys.argv[3]
-
+def fetch(timeLimit, tickerFname, infoFname):
     # Collect Stock Tickers
     tickerSet = getTickers(tickerFname)
 
@@ -106,3 +101,12 @@ if __name__ == '__main__':
             outfile.flush()
     print("Time Limit Has Expired at", datetime.datetime.now().time())
     outfile.close()
+
+if __name__ == '__main__':
+    # Collect System Arguments
+    timeLimit = int(sys.argv[1])
+    tickerFname = sys.argv[2]
+    infoFname = sys.argv[3]
+
+    # Fetch
+    fetch(timeLimit, tickerFname, infoFname)
