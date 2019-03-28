@@ -7,6 +7,49 @@ import numpy
 import matplotlib.pyplot
 import matplotlib.dates
 
+def valid_graph_file(s):
+    """Determine if graph output file is valid.
+
+    Determine is the graph output file/path provided is valid. Valid files must
+    end in one of these extensions: "eps", "pdf", "pgf", "png", "ps", "raw", "rgba", "svg", "svgz".
+    If the file exists, consent to overwrite will be requested from standard input. 
+
+    Args:
+        s (str): Graph filename/path to verify.
+
+    Returns:
+        s(str): Returns the filename if valid, exits program if invalid or consent to override not gained.
+    """
+
+    # Check for Appropriate File Ending
+    fname = str()
+    validExtensions = ["eps", "pdf", "pgf", "png", "ps", "raw", "rgba", "svg", "svgz"] # Extensions Supported by matplotlib
+    if s.find('.') < 0:
+        # No File Ending, Insert Default .png
+        fname = s + ".png"
+    else:
+        # File Ending
+        fname = s
+        if fname[s.find('.')+1:] not in validExtensions:
+            exit(fname[s.find('.')+1:] + " Is Not A Valid Graph File Extension. Predictor Aborted.")
+
+    # Check for Existing File & Handle Overrides by User Consent
+    try:
+        open(fname, "r")
+        # File Exists Already, Check for Overwrite Consent
+        consentOverride = str()
+        while consentOverride != 'y' or consentOverride != 'n':
+            consentOverride = input("The file " + fname + " already exists. Overwrite? [(y)es/(n)o]").lower()
+            if consentOverride == 'y' or consentOverride == 'yes':
+                return s
+            elif consentOverride == 'n' or consentOverride == 'no':
+                exit("User Did Not Constent to Overwrite " + fname + " Predictor Aborted.")
+            else:
+                print("Invalid Response! Please choose 'y' or 'n'.")
+    except IOError as e:
+        # File Does Not Exist
+        return s
+
 def valid_file(s):
     """Verifies a filename/path.
 
@@ -31,7 +74,7 @@ def parseInput():
     parser = argparse.ArgumentParser()
     parser.add_argument("ticker", type=str, help="Stock Ticker to Predict")
     parser.add_argument("info_filename", type=valid_file, help="Filename/Path to Info CSV File")
-    parser.add_argument("graph_filename", type=str, help="Filename/Path to Output Graph")
+    parser.add_argument("graph_filename", type=valid_graph_file, help="Filename/Path to Output Graph")
     parser.add_argument("col", type=str, choices=("latestPrice", "latestVolume"), help="Column to Predict")
     parser.add_argument("t", type=int, help="Duration to Predict in Minutes")
     return parser.parse_args()
