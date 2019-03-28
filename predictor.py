@@ -1,11 +1,19 @@
 #!/usr/bin/env python3
+"""Generate a Graphical Prediction from Known Stock History
+
+Examples:
+    $ python3 predictor.py jobs info.csv graph.png latestPrice 10
+    $ python3 predictor.py aapl alldata.csv prediction latestVolume 100
+    $ python3 predictor.py googl sample.csv future.svg latestVolume 3
+"""
+
 import datetime
 import argparse
 import csv
-from sklearn import linear_model
 import numpy
 import matplotlib.pyplot
 import matplotlib.dates
+from sklearn import linear_model
 
 def valid_graph_file(s):
     """Determine if graph output file is valid.
@@ -163,6 +171,16 @@ def convertToMinutes(time):
     return hour + minute
 
 def predictor(ticker, info_filename, graph_filename, col, t):
+    """Generate a linear regression prediction graph from known stock data.
+
+    Args:
+        ticker (str): Valid Stock Ticker to Predict.
+        info_filename (str): Valid Input CSV Info Filename/Path of Stock Data
+        graph_filename (str): Valid Output Graph Filename/Path
+        col (str): Column to Predict ('latestPrice' or 'latestVolume')
+        t (int): Time in Minutes to Predict
+    """
+
     # Initialize Predictor
     reg = linear_model.LinearRegression()
 

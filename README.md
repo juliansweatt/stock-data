@@ -10,8 +10,8 @@ _Hannah Howard & Julian Sweatt_
 * [README.md](./README.md) _This File_ | Project Details & Information Written in Markdown
 * [tickers.py](./tickers.py) Generates File of Valid Stock Tickers
 * [fetcher.py](./fetcher.py) Gets Periodic Stock Information in CSV Format
-* [query.py](./query.py) Query A CSV file for a Particular Ticker at a Given Time.
-* [predictor.py](./predictor.py) @todo
+* [query.py](./query.py) Query a CSV file for a Particular Ticker at a Given Time.
+* [predictor.py](./predictor.py) Generate a Graph of Predicted Stock Data from Known Stock History Data
 
 ## Usage
 * [tickers.py](./tickers.py)  
@@ -44,9 +44,16 @@ _Hannah Howard & Julian Sweatt_
     such a row exists, relevant data from that row will be printed. The `verbose` flag is set to `False`, so column names and
     row/column lengths of the CSV file will not be printed.
 * [predictor.py](./predictor.py)
+  * Usage: `python3 predictor.py ticker info_filename graph_filename col t`
+    * `ticker` _(str)_ - The stock ticker to predict.
+    * `info_filename` _(str)_ - The CSV info filename/path containing stock history. Expected to be the output of `fetcher.py`.
+    * `graph_filename` _(str)_ - The output filename/path for the prediction graph being created. Must have no file extension (default is `.png`) or a supported file extension (`eps`, `pdf`, `pgf`, `png`, `ps`, `raw`, `rgba`, `svg`, or `svgz`).
+    * `col` _(str)_ - The column to predict. Must be `latestPrice` or `latestVolume`.
+    * `t` _(int)_ - The duration of time to predict stock data for in minutes.
+  * Example: `python3 predictor.py jobs info.csv graph.png latestPrice 10`
 
 ## Recommended Execution
-@todo
+
 
 ## Dependencies
 * Python 3
@@ -66,3 +73,6 @@ _Hannah Howard & Julian Sweatt_
     * matplotlib
       * **Install:** `pip3 install matplotlib`
       * **Purpose:** Used for Plotting Data
+    * numpy
+      * **Install:** `pip3 install numpy`
+      * **Purpose:** Array Manipulation
