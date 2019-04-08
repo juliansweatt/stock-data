@@ -10,6 +10,8 @@ Welcome to Stock Data Project 2's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+.. automodule:: stock
+    :members:
 
 
 Indices and tables
