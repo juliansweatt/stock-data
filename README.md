@@ -8,7 +8,7 @@ _Julian Sweatt & Hannah Howard_
 This repository contains python projects (related to the stock market) made in the CIS4930 (Python Programming) course by [Dr. Piyush Kumar](https://www.cs.fsu.edu/department/faculty/piyush/) at Florida State University.
 
 # Projects
-**Project 1 - Machine Learning Market Predictions**
+**Project 1 - Machine Learning Market Predictions**  
 **Project 2 - Data Mining, Database Storage, & Python Testing**
 
 # Academic Honesty & Appropriate Use
