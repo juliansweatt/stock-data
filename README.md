@@ -96,3 +96,6 @@ For example, if known data is collected from 07:00 to 10:00,
 predictions can not be made past 23:59. However, it doesn't make
 much sense to need to predict outside of the current day as the NASDAQ 
 market is closed late at night/early in the morning.
+
+# Academic Honesty & Appropriate Use
+This repository branch is available on the personal github of Julian Sweatt for academic and professional purposes. The repository is purposefully obfuscated from search engine indexing/crawling to comply with the [Florida State University Academic Honor Policy](https://fda.fsu.edu/sites/g/files/imported/storage/original/application/0ab8e9de6a98c1377d68de9717988bda.pdf). The content of this repository may be used as a reference of the technical abilities of the developer. The content of this repository may not be used by another student to complete an academic assignment in any way.
